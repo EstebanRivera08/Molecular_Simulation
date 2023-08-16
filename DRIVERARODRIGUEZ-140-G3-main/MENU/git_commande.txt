@@ -1,0 +1,75 @@
+Interaction avec GitHub en ligne de commande
+============================================
+
+Il est possible d'interagir de manière automatique avec GitHub en mode ligne de commande, sans utiliser GitHub Desktop.
+C'est une façon pratique de travailler dans le cas où GitHub Desktop ne fonctionne pas ou fonctionne mal. Un peu moins conviviale certes, mais parfaitement efficace ...
+
+Il faut dans un premier temps travailler sur la procédure d'authentification, l'idée ici étant d'éviter l'authentification par mot de passe qui est notoirement faible.
+Pour cela on va passer par le mécanisme des clés publiques/privées.
+Le principe de ces clés peut être comparé à vos empreintes digitales qui sont uniques ; ici c'est pareil vos clés sont uniques et vous appartiennent.
+On parle de clés privées et publiques car elles fonctionnent toujours par paires, ce qui est chiffré avec l'une est déchiffré avec l'autre.
+
+La première étape est donc de créer ces clés si ce n'est pas déjà fait. Pour cela vous ouvrez un terminal et vous tapez la commande
+    ssh-keygen -trsa
+Ici "rsa" correspond à l'algorithme de chiffrement.
+La commande vous demandera un mot de passe optionnel, vous pouvez le laisser vide.
+
+Par curiosité vous pouvez regarder à quoi ressemblent ces clés. Pour cela, toujours à partir du terminal vous allez dans le dossier ~/.ssh et vous en regardez le contenu
+    cd ~/.ssh
+    ls
+Là vous devez normalement voir deux nouveaux fichiers : id_rsa et id_rsa.pub
+Le fichier id_rsa est votre clé privée, le fichier id_rsa.pub est votre clé publique.
+
+Vous pouvez regarder à quoi ressemble votre clé publique par la commande
+    cat ~/.ssh/id_rsa.pub
+Vous pouvez faire la même commande avec votre clé privée, mais ATTENTION UNIQUEMENT si personne ne se trouve à côté de vous à regarder votre écran ; dans le cas contraire votre clé privée serait potentiellement compromise.
+
+La règle unique et universelle est simple
+    - si l'on vous demande votre clé publique, aucun problème à la transmettre
+    - si l'on vous demande votre clé privée, vous ne devez JAMAIS la transmettre à qui que soit
+    
+La deuxième étape consiste à valider votre clé dans GitHub.
+Pour cela il vous faut ouvrir votre session GitHub à partir d'un navigateur Web. En haut à droite vous devez pouvoir accéder au menu "Settings".
+Une fois la page chargée vous avez accès à différents éléments de réglage, parmi lesquels "SSH and GPG keys". En cliquant ce lien une nouvelle page se charge avec dans la partie supérieure une rubrique "SSH keys"
+Vous cliquez alors sur "New SSH key"
+- vous renseignez le champ "Title" : il est là juste pour vous permettre de retrouver facilement votre clé si vous en avez plusieurs
+- le "Key type" doit être positionné sur "Authentication Key"
+- vous copiez/collez votre clé PUBLIQUE (évidemment pas votre clé PRIVEE) dans le champ "Key" et vous validez avec le bouton "Add SSH key"
+GitHub vous envoie normalement un mail vous indiquant qu'une nouvelle clé SSH vient d'être ajoutée.
+
+Clônage d'un dépôt
+Ce clônage sera a priori réalisé une seule fois, en première séance de TP ; elle consiste à charger le dépôt depuis le serveur GitHub vers votre machine locale. 
+Dans l'interface GitHub sur votre navigateur Web, sélectionnez le dépôt puis le bouton "Code".
+GitHub vous propose alors plusieurs mécanismes de clônage, vous sélectionnez "SSH".
+Et vous copiez/collez le nom du dépôt qui se présente normalement sous la forme 
+    git@github.com:Brigitte-Quenet/MON_NOM_PRENOM-140-GX.git (X=1, 2 ou 3)
+    
+Dans un terminal
+1) placez vous dans votre dossier de travail - vous êtes libre de choisir n'importe quel dossier, vous le créez au besoin
+    mkdir tp_menu
+    cd tp_menu
+2) clonez le dépôt
+    git clone git@github.com:Brigitte-Quenet/MON_NOM_PRENOM-140-GX.git
+Là chose importante, on va vous demander si vous reconnaissez l'identité numérique de la machine avec laquelle vous communiquez. Cette demande n'interviendra QUE LORS DE VOTRE PREMIERE connexion.
+Comme c'est votre première connexion, vous ne pouvez qu'accepter en tapant "yes" ("yes" en entier)
+Là chose importante bis : si vous recevez un message de ce genre lors des connexions suivantes, c'est a priori totalement anormal et vous devez rejetter la demande de connexion
+Une fois la commande exécutée, vous devez avoir dans votre dossier de travail un sous dossier nommé MON_NOM_PRENOM-140-GX.git
+3) allez dans ce dossier
+    cd MON_NOM_PRENOM-140-GX.git
+et commencez à travailler...
+
+A tout moment, et en particulier à chaque fin de séance de TP, vous pouvez
+1) voir ce qui a été modifié
+    git status
+vous pouvez éventuellement voir les modifications d'un fichier particulier
+    git status fichier_particulier
+2) committer vers GitHub vos modifications
+    git commit -a -m "texte explicatif de mes modifications"
+3) pousser votre commit (ou vos commits) vers GitHub, ce qui aura pour effet de synchroniser le dépôt distant avec votre répertoire de travail local
+    git push
+    
+Noter que toutes ces commandes doivent se faire sans aucune saisie d'identifiant ou mot de passe ; c'est votre paire de clés privée/publique qui fait office de mécanisme d'authentification.
+
+
+
+
